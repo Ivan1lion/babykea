@@ -64,7 +64,7 @@ class UserRequest(StatesGroup):
     get_comments = State()
 
 
-# фильтры для загрузки фото №1-3 и комментария
+# фильтры для загрузки фото клиента №1-3 и комментария
 
 photo_dict = []
 
