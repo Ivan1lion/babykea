@@ -14,20 +14,6 @@ from database.orm_query import orm_user_request, orm_add_user
 for_user_router = Router()
 
 
-@for_user_router.message(CommandStart())
-async def cmd_start(message: Message):
-    await orm_add_user(message.from_user.username)
-    file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
-    string = (f"❗️ Для поиска нужных вам запчастей загрузите 3 фотографии:\n"
-              f"\n<b><u>Фото №1</u></b> - Общий вид коляски (для понимания модели и типа коляски)\n"
-              f"\n<b><u>Фото №2</u></b> - Фото поломанной (не рабочей) детали или какого либо элемента коляски\n"
-              f"\n<b><u>Фото №3</u></b> - Фото той же детали (узла, элемента коляски), но с любого другого ракурса "
-              f"для полноты картины\n"
-              f"\n\n*фотографии можно сделать сразу из бота (заранее подготавливать их не нужно)")
-    await message.answer_photo(photo=file, caption=string,
-                               reply_markup=kb.start_photo)
-
-
 # команды для кнопки МЕНЮ
 @for_user_router.message(Command("policy"))
 async def policy_cmd(message: Message):
@@ -62,6 +48,24 @@ class UserRequest(StatesGroup):
     get_photo2 = State()
     get_photo3 = State()
     get_comments = State()
+
+
+@for_user_router.message(CommandStart())
+async def cmd_start(message: Message, state: FSMContext):
+    check_state = await state.get_state()
+    if check_state:
+        await state.clear()
+
+    await orm_add_user(message.from_user.username)
+    file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
+    string = (f"❗️ Для поиска нужных вам запчастей загрузите 3 фотографии:\n"
+              f"\n<b><u>Фото №1</u></b> - Общий вид коляски (для понимания модели и типа коляски)\n"
+              f"\n<b><u>Фото №2</u></b> - Фото поломанной (не рабочей) детали или какого либо элемента коляски\n"
+              f"\n<b><u>Фото №3</u></b> - Фото той же детали (узла, элемента коляски), но с любого другого ракурса "
+              f"для полноты картины\n"
+              f"\n\n*фотографии можно сделать сразу из бота (заранее подготавливать их не нужно)")
+    await message.answer_photo(photo=file, caption=string,
+                               reply_markup=kb.start_photo)
 
 
 # фильтры для загрузки фото клиента №1-3 и комментария
