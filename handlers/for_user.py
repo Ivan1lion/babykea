@@ -76,7 +76,7 @@ photo_dict = []
 async def cmd_get_photo(callback: CallbackQuery, state: FSMContext):
     file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
     string = (f"Загрузите в БОТ фото общего вида коляски\n"
-              f"\nДля этого нажмите на скрепку 📎 внизу экрана, сделайте снимок и отправьте его в БОТ")
+              f"\nДля этого нажмите на скрепку 📎 внизу экрана, сделайте ОДИН снимок и отправьте его")
     await callback.answer()
     await callback.message.answer_photo(photo=file, caption=string)
     await state.set_state(UserRequest.get_photo1)
@@ -84,11 +84,16 @@ async def cmd_get_photo(callback: CallbackQuery, state: FSMContext):
 
 @for_user_router.message(StateFilter(None))
 async def cmd_get_photo(message: Message, state: FSMContext):
+    await message.delete()
     await message.answer(text="Нужно нажать на кнопку ⤴️")
 
 
 @for_user_router.message(UserRequest.get_photo1, F.photo)
 async def get_photo1(message: Message, state: FSMContext):
+    if message.media_group_id is not None:
+        await message.delete()
+        return
+
     file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
     string = (f"Отлично 👌\n"
               f"\nТеперь сделайте и загрузите фото сломанной детали. Или нерабочего узла (если явных дефектов не видно)\n"
@@ -102,11 +107,15 @@ async def get_photo1(message: Message, state: FSMContext):
 
 @for_user_router.message(UserRequest.get_photo1)
 async def get_photo1(message: Message, state: FSMContext):
-    await message.answer(text="Это не то что нужно. Пришлите фото внешнего вида коляски")
+    await message.delete()
 
 
 @for_user_router.message(UserRequest.get_photo2, F.photo)
 async def get_photo2(message: Message, state: FSMContext):
+    if message.media_group_id is not None:
+        await message.delete()
+        return
+
     file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
     string = (f"👍\n"
               f"\nПожалуйста сделайте и загрузите ещё одно фото этойже детали или узла, но с любого другого ракурса")
@@ -117,8 +126,17 @@ async def get_photo2(message: Message, state: FSMContext):
     photo_dict.append(photo_data_2.file_id)
 
 
+@for_user_router.message(UserRequest.get_photo2)
+async def get_photo1(message: Message, state: FSMContext):
+    await message.delete()
+
+
 @for_user_router.message(UserRequest.get_photo3, F.photo)
 async def get_photo3(message: Message, state: FSMContext):
+    if message.media_group_id is not None:
+        await message.delete()
+        return
+
     file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
     string = (f"Фото сохранены. Остался последний шаг\n"
               f"\nНапишите короткий комментарий-пояснение к вашему запросу, если это необходимо "
@@ -129,6 +147,11 @@ async def get_photo3(message: Message, state: FSMContext):
     await state.set_state(UserRequest.get_comments)
     photo_data_3 = message.photo[-1]
     photo_dict.append(photo_data_3.file_id)
+
+
+@for_user_router.message(UserRequest.get_photo3)
+async def get_photo1(message: Message, state: FSMContext):
+    await message.delete()
 
 
 @for_user_router.message(UserRequest.get_comments, F.text)
@@ -147,8 +170,6 @@ async def get_comments(message: Message, state: FSMContext):
     await message.answer(text=(f"👆 Ваш запрос сформирован и готов к отправке в 87 организаций\n"
               f"\nЭто официальные дистребьюторы, сервисные центры, частные мастерские и интернет-магазины "
               f"запчастей для детских колясок"), reply_markup=kb.finish)
-
-
 
 
 @for_user_router.callback_query(UserRequest.get_comments, F.data == "no_commens")
@@ -170,6 +191,9 @@ async def keyboards_no_commens(callback: CallbackQuery, state: FSMContext, sessi
               f"запчастей для детских колясок"), reply_markup=kb.finish)
 
 
+@for_user_router.message(UserRequest.get_comments)
+async def get_photo1(message: Message, state: FSMContext):
+    await message.delete()
 
 
 # Сброс состояний - обработчик отмены запроса
@@ -191,3 +215,8 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext, session: Asy
     await callback.message.answer(text=f"Ваш запрос отправлен\n"
                                        f"\nПоиск может занять 24 часа")
     await state.clear()
+
+
+@for_user_router.message(StateFilter("*"))
+async def get_photo1(message: Message, state: FSMContext):
+    await message.delete()
