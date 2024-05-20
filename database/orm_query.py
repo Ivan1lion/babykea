@@ -21,9 +21,12 @@ async def orm_user_request(session: AsyncSession, data: dict):
 
 async def orm_add_user(username: str | None = None):
     async with session_maker() as session:
-        session.add(User(username=username))
-        await session.flush()
-        await session.commit()
+        result = await session.execute(select(User).where(User.username == username))
+        user = result.scalar_one_or_none()
+
+        if not user:
+            session.add(User(username=username))
+            await session.commit()
 
 
 
