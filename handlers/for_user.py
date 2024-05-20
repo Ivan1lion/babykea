@@ -20,6 +20,16 @@ async def policy_cmd(message: Message):
     await message.answer("Политика конфиденциальности")
 
 
+@for_user_router.message(Command("help"))
+async def policy_cmd(message: Message):
+    await message.answer(f"Если при подборе запчастей в переписке с вами продавец или представитель официального "
+                         f"дистребьютора вели диалог неподобающим образом (хамили, игнорировали ваши вопросы), "
+                         f"обязательно сообщите нам о этом через специальную форму на сайте\n"
+                         f"\n<a href='http://www.Babykea.ru/'>Babykea.ru</a>\n"
+                         f"\nМы поможем вам. Разберемся в ситуации и в случае подтверждения грубого общения "
+                         f"заблокируем данного продавца на нашем сервисе")
+
+
 @for_user_router.message(Command("info"))
 async def info_cmd(message: Message):
     info_text = (f"Бот отправляет запрос в 87 организаций. Оплата производится через приложение и все происходит "
@@ -157,7 +167,7 @@ async def get_photo1(message: Message, state: FSMContext):
 @for_user_router.message(UserRequest.get_comments, F.text)
 async def get_comments(message: Message, state: FSMContext):
     string = (f"<b><u>Дополнительная информация:</u></b>\n"
-              f"\n{message.text}")
+              f"\n<blockquote>{message.text}</blockquote>")
     await state.update_data(get_comments=message.text)
 
     album = []
