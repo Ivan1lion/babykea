@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 
 class Base(AsyncAttrs, DeclarativeBase):
     created: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
-    updated: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
 
 class User(Base):
