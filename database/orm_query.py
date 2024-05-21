@@ -20,13 +20,13 @@ async def orm_add_user(username: str | None = None):
 
 ############# Добавление запроса пользователя в БД ##############
 
-async def orm_user_request(session: AsyncSession, data: dict):
+async def orm_user_request(session: AsyncSession, user_name: str, data: dict):
     obj = UserData(
         get_photo1=data['get_photo1'],
         get_photo2=data['get_photo2'],
         get_photo3=data['get_photo3'],
         get_comments=data['get_comments'],
-        user_id=
+        username=user_name
     )
     session.add(obj)
     await session.commit()

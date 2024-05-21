@@ -21,4 +21,4 @@ class UserData(Base):
     get_photo2: Mapped[str] = mapped_column(String(150))
     get_photo3: Mapped[str] = mapped_column(String(150))
     get_comments: Mapped[str] = mapped_column(Text)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
+    username: Mapped[str] = mapped_column(String(150))

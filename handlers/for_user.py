@@ -220,7 +220,8 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
 @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
 async def clear_handler(callback: CallbackQuery, state: FSMContext, session: AsyncSession()):
     data = await state.get_data()
-    await orm_user_request(session, data)
+    user_name = callback.from_user.username
+    await orm_user_request(session,user_name, data)
     await callback.answer()
     await callback.message.answer(text=f"Ваш запрос отправлен\n"
                                        f"\nПоиск может занять 24 часа")
