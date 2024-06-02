@@ -9,6 +9,7 @@ from aiogram.methods.delete_message import DeleteMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import handlers.keyboards as kb
+from handlers.pay import order
 from database.orm_query import orm_user_request, orm_add_user
 
 for_user_router = Router()
@@ -216,7 +217,13 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
                                        f"МЕНЮ -> НАЙТИ ЗАПЧАСТЬ")
 
 
-# Начать поиск
+############# Оплата #############
+# @for_user_router.message(StateFilter("*"), F.data == "get_search")
+# async def get_search_handler(massage: types.Message, bot: types.BotCommand):
+#     await order(massage, bot)
+
+
+
 @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
 async def clear_handler(callback: CallbackQuery, state: FSMContext, session: AsyncSession()):
     data = await state.get_data()
