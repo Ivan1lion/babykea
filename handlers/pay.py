@@ -19,10 +19,11 @@ async def order(message: Message, bot: Bot):
                 amount=-151
             )
         ],
-        photo_url=FSInputFile("./mediafile_for_bot/1_zapchasti.jpg"),
         need_shipping_address=False,
         is_flexible=False,
         request_timeout=15
     )
 
+
+# async def su
 
