@@ -6,7 +6,7 @@ from database.engine import session_maker
 from sqlalchemy import select
 
 
-############# Добавление юзера в БД ##############
+############# Добавление юзера в БД#############
 
 async def orm_add_user(username: str | None = None):
     async with session_maker() as session:
@@ -18,7 +18,7 @@ async def orm_add_user(username: str | None = None):
             await session.commit()
 
 
-############# Добавление запроса пользователя в БД ##############
+############# Добавление запроса пользователя в БД#############
 
 async def orm_user_request(session: AsyncSession, user_name: str, data: dict):
     obj = UserData(
