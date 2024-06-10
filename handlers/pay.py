@@ -16,8 +16,7 @@ async def get_search_comand(message: Message):
             "currency": "RUB"
         },
         "confirmation": {
-            "type": "redirect",
-            "return_url": "https://t.me/Babykea_Bot"
+            "type": "embedded",
         },
         "capture": True,
         "description": "Заказ №37",
