@@ -2,28 +2,30 @@ import os
 import yookassa
 from yookassa import Payment, Configuration
 import uuid
-# from aiogram import Bot
-# from aiogram.types import Message, LabeledPrice, PreCheckoutQuery
 
-async def get_search_comand(message: Message):
-    Configuration.account_id = os.getenv("ACCOUNT_ID")
-    Configuration.secret_key = os.getenv("SECRET_KEY")
+Configuration.account_id = os.getenv("ACCOUNT_ID")
+Configuration.secret_key = os.getenv("SECRET_KEY")
+
+
+############## Создание платежа ##############
+async def get_search_comand():
     idempotence_key = str(uuid.uuid4())
-
     payment = Payment.create({
-        "amount": {
-            "value": "99.00",
-            "currency": "RUB"
+        "amount": {"value": "99.00", "currency": "RUB"},
+        "receipt": {
+            "items":{
+                "description":  "Рассылка запроса на необходимые комплектующие для коляски",
+                "amount": {"value": "99.00", "currency": "RUB"},
+                "vat_code": 1,
+                "quantity": 1,
+            },
         },
-        "confirmation": {
-            "type": "embedded",
-        },
+        "confirmation": {"type": "embedded"},
         "capture": True,
-        "description": "Заказ №37",
-        "metadata": {
-            "order_id": "37"
-        }
+        "description": "Быстрый поиск запчатей для колясок",
     }, idempotence_key)
+
+    return payment
 
 
 

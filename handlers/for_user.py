@@ -9,7 +9,7 @@ from aiogram.methods.delete_message import DeleteMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import handlers.keyboards as kb
-from handlers.pay import order
+from handlers.pay import get_search_comand
 from database.orm_query import orm_user_request, orm_add_user
 
 for_user_router = Router()
@@ -218,21 +218,26 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
 
 
 ############# Оплата #############
-# @for_user_router.message(StateFilter("*"), F.data == "get_search")
-# async def get_search_handler(massage: types.Message, bot: types.BotCommand):
-#     await order(massage, bot)
+@for_user_router.message(StateFilter("*"), F.data == "get_search")
+async def get_search_handler(massage: Message,):
+    await get_search_comand(massage.chat.id)
+    payment = create_payment()
+    confirmation_token = payment.confirmation.confirmation_token
+    payment_url = f"https://your-domain.com/payment.html?token={confirmation_token}"
+
+    await message.answer(f"Для оплаты перейдите по ссылке: {payment_url}")
 
 
 
-@for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
-async def clear_handler(callback: CallbackQuery, state: FSMContext, session: AsyncSession()):
-    data = await state.get_data()
-    user_name = callback.from_user.username
-    await orm_user_request(session,user_name, data)
-    await callback.answer()
-    await callback.message.answer(text=f"Ваш запрос отправлен\n"
-                                       f"\nПоиск может занять 24 часа")
-    await state.clear()
+# @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
+# async def clear_handler(callback: CallbackQuery, state: FSMContext, session: AsyncSession()):
+#     data = await state.get_data()
+#     user_name = callback.from_user.username
+#     await orm_user_request(session,user_name, data)
+#     await callback.answer()
+#     await callback.message.answer(text=f"Ваш запрос отправлен\n"
+#                                        f"\nПоиск может занять 24 часа")
+#     await state.clear()
 
 
 @for_user_router.message(StateFilter("*"))
