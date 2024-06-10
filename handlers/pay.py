@@ -8,6 +8,7 @@ import uuid
 async def get_search_comand(message: Message):
     Configuration.account_id = os.getenv("ACCOUNT_ID")
     Configuration.secret_key = os.getenv("SECRET_KEY")
+    idempotence_key = str(uuid.uuid4())
 
     payment = Payment.create({
         "amount": {
@@ -23,7 +24,7 @@ async def get_search_comand(message: Message):
         "metadata": {
             "order_id": "37"
         }
-    })
+    }, idempotence_key)
 
 
 
@@ -39,7 +40,7 @@ async def get_search_comand(message: Message):
 #         chat_id=message.chat.id,
 #         title="Поиск запчастей для детских колясок",
 #         description="Рассылка запроса на подбор комплектующих для детской коляски",
-#         provider_token=os.getenv("PROVIDER_TOKEN"),
+#         provider_token=os.getenv("API_TOKEN"),
 #         currency="RUB",
 #         prices=[
 #             LabeledPrice(
