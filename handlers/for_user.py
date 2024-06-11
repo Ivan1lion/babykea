@@ -1,7 +1,7 @@
-from aiogram import F, Router, types
+from aiogram import F, Router, types, Bot
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command, StateFilter
-from aiogram.types import Message, FSInputFile, CallbackQuery, InputMediaPhoto
+from aiogram.types import Message, FSInputFile, CallbackQuery, InputMediaPhoto, PreCheckoutQuery, ContentType
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.methods.delete_message import DeleteMessage
@@ -9,7 +9,7 @@ from aiogram.methods.delete_message import DeleteMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import handlers.keyboards as kb
-from handlers.pay import get_search_comand
+from handlers.pay import order
 from database.orm_query import orm_user_request, orm_add_user
 
 for_user_router = Router()
@@ -219,13 +219,14 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
 
 ############# Оплата #############
 @for_user_router.message(StateFilter("*"), F.data == "get_search")
-async def get_search_handler(massage: Message,):
-    await get_search_comand(massage.chat.id)
-    payment = create_payment()
-    confirmation_token = payment.confirmation.confirmation_token
-    payment_url = f"https://your-domain.com/payment.html?token={confirmation_token}"
-
-    await message.answer(f"Для оплаты перейдите по ссылке: {payment_url}")
+async def get_search_handler(massage: Message):
+    await order()
+    # await get_search_comand(massage.chat.id)
+    # payment = create_payment()
+    # confirmation_token = payment.confirmation.confirmation_token
+    # payment_url = f"https://your-domain.com/payment.html?token={confirmation_token}"
+    #
+    # await message.answer(f"Для оплаты перейдите по ссылке: {payment_url}")
 
 
 
@@ -243,3 +244,15 @@ async def get_search_handler(massage: Message,):
 @for_user_router.message(StateFilter("*"))
 async def get_photo1(message: Message, state: FSMContext):
     await message.delete()
+
+
+@for_user_router.pre_checkout_query(lambda query: True)
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
+    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+
+@for_user_router.message(F.data==[ContentType.SUCCESSFUL_PAYMENT])
+async def successful_payment(message: Message):
+    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
+
+    bot.infinity_polling()
