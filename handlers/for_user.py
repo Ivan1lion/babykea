@@ -220,13 +220,8 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
 ############# Оплата #############
 @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
 async def get_search_handler(callback: CallbackQuery, bot: Bot):
+    await callback.answer()
     await order(callback.message, bot)
-    # await get_search_comand(massage.chat.id)
-    # payment = create_payment()
-    # confirmation_token = payment.confirmation.confirmation_token
-    # payment_url = f"https://your-domain.com/payment.html?token={confirmation_token}"
-    #
-    # await message.answer(f"Для оплаты перейдите по ссылке: {payment_url}")
 
 
 
@@ -247,10 +242,10 @@ async def get_photo1(message: Message, state: FSMContext):
 
 
 @for_user_router.pre_checkout_query(lambda query: True)
-async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
 @for_user_router.message(F.successful_payment)
-async def successful_payment(message: Message):
+async def successful_payment(message: Message, bot: Bot):
     await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
