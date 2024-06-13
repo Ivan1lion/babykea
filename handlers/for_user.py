@@ -1,7 +1,7 @@
 from aiogram import F, Router, types, Bot
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command, StateFilter
-from aiogram.types import Message, FSInputFile, CallbackQuery, InputMediaPhoto, PreCheckoutQuery, ContentType
+from aiogram.types import Message, FSInputFile, CallbackQuery, InputMediaPhoto, PreCheckoutQuery, ContentType, SuccessfulPayment
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.methods.delete_message import DeleteMessage
@@ -218,9 +218,9 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
 
 
 ############# Оплата #############
-@for_user_router.message(StateFilter("*"), F.data == "get_search")
-async def get_search_handler(massage: Message):
-    await order()
+@for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
+async def get_search_handler(callback: CallbackQuery, bot: Bot):
+    await order(callback.message, bot)
     # await get_search_comand(massage.chat.id)
     # payment = create_payment()
     # confirmation_token = payment.confirmation.confirmation_token
@@ -247,12 +247,10 @@ async def get_photo1(message: Message, state: FSMContext):
 
 
 @for_user_router.pre_checkout_query(lambda query: True)
-async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
-@for_user_router.message(F.data==[ContentType.SUCCESSFUL_PAYMENT])
+@for_user_router.message(F.successful_payment)
 async def successful_payment(message: Message):
     await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
-
-    bot.infinity_polling()

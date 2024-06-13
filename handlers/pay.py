@@ -1,5 +1,6 @@
 import os
-from aiogram.types import LabeledPrice, Message
+import json
+from aiogram.types import LabeledPrice, Message, CallbackQuery
 from aiogram import Bot
 # import yookassa
 # from yookassa import Payment, Configuration
@@ -9,9 +10,24 @@ from aiogram import Bot
 
 
 ############## Создание платежа ##############
+PROVIDER_DATA_WO_EMAIL = {
+    "receipt":{
+        "items":[
+                {
+                "description": "Рассылка запроса на необходимые комплектующие для коляски",
+                "amount": {"value": "99.00", "currency": "RUB"},
+                "vat_code": 1,
+                "quantity": 1,
+                }
+        ]
+    }
+}
+
+
 async def order(message: Message, bot: Bot):
     await bot.send_invoice(
         chat_id=message.chat.id,
+        payload="payment form",
         title="Поиск запчастей для детских колясок",
         description="Рассылка запроса на подбор комплектующих для детской коляски",
         provider_token=os.getenv("API_TOKEN"),
@@ -29,16 +45,7 @@ async def order(message: Message, bot: Bot):
         need_shipping_address=False,
         is_flexible=False,
         request_timeout=15,
-        provider_data={
-            "items":[
-                {
-                "description": "Рассылка запроса на необходимые комплектующие для коляски",
-                "amount": {"value": "99.00", "currency": "RUB"},
-                "vat_code": 1,
-                "quantity": 1,
-                }
-            ]
-        }
+        provider_data=json.dumps(PROVIDER_DATA_WO_EMAIL)
     )
 
 
