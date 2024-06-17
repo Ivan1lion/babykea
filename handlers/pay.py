@@ -42,8 +42,7 @@ async def order(message: Message, bot: Bot):
                 amount=-15100
             )
         ],
-        need_shipping_address=False,
-        is_flexible=False,
-        request_timeout=15,
-        provider_data=json.dumps(PROVIDER_DATA_WO_EMAIL)
+        provider_data=json.dumps(PROVIDER_DATA_WO_EMAIL),
+        need_email=True,
+        send_email_to_provider=True
     )

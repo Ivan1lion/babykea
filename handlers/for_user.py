@@ -217,11 +217,35 @@ async def clear_handler(callback: CallbackQuery, state: FSMContext) -> None:
                                        f"МЕНЮ -> НАЙТИ ЗАПЧАСТЬ")
 
 
+
+@for_user_router.message(StateFilter("*"))
+async def get_photo1(message: Message, state: FSMContext):
+    await message.delete()
+
+
 ############# Оплата #############
 @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
 async def get_search_handler(callback: CallbackQuery, bot: Bot):
     await callback.answer()
     await order(callback.message, bot)
+
+
+@for_user_router.pre_checkout_query(lambda query: True)
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
+    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+
+@for_user_router.message(lambda message: message.successful_payment)
+async def successful_payment(message: Message, bot: Bot):
+    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, "
+                                            f"id: {message.successful_payment.provider_payment_charge_id}")
+    data = await state.get_data()
+    user_name = message.from_user.username
+    await orm_user_request(session,user_name, data)
+    await message.answer(text=f"Ваш запрос отправлен\n"
+                                       f"\nПоиск может занять 24 часа")
+    await state.clear()
+
 
 
 
@@ -236,16 +260,6 @@ async def get_search_handler(callback: CallbackQuery, bot: Bot):
 #     await state.clear()
 
 
-@for_user_router.message(StateFilter("*"))
-async def get_photo1(message: Message, state: FSMContext):
-    await message.delete()
 
 
-@for_user_router.pre_checkout_query(lambda query: True)
-async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
-    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
-
-@for_user_router.message(F.successful_payment)
-async def successful_payment(message: Message, bot: Bot):
-    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
