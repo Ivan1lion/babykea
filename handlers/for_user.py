@@ -95,6 +95,8 @@ async def cmd_get_photo(callback: CallbackQuery, state: FSMContext):
 
 @for_user_router.message(StateFilter(None))
 async def cmd_get_photo(message: Message, state: FSMContext):
+    if message.from_user.is_bot:
+        return
     await message.delete()
     await message.answer(text="Нужно нажать на кнопку ⤴️")
 
@@ -235,10 +237,9 @@ async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
-@for_user_router.message(lambda message: message.successful_payment)
-async def successful_payment(message: Message, bot: Bot):
-    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, "
-                                            f"id: {message.successful_payment.provider_payment_charge_id}")
+@for_user_router.message(F.content_types == ContentType.SUCCESSFUL_PAYMENT)
+async def successful_payment(message: Message):
+    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
     data = await state.get_data()
     user_name = message.from_user.username
     await orm_user_request(session,user_name, data)
