@@ -17,7 +17,7 @@ PROVIDER_DATA_WO_EMAIL = {
                 "description": "Рассылка запроса на необходимые комплектующие для коляски",
                 "amount": {"value": "99.00", "currency": "RUB"},
                 "vat_code": 1,
-                "quantity": 1,
+                "quantity": "1.00",
                 }
         ]
     }
