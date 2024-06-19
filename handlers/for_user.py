@@ -237,8 +237,8 @@ async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
-@for_user_router.message(F.content_types == ContentType.SUCCESSFUL_PAYMENT)
-async def successful_payment(message: Message):
+@dp.message(F.content_type == ContentType.SUCCESSFUL_PAYMENT)
+async def successful_payment(message: Message, state: FSMContext, session: AsyncSession()):
     await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
     data = await state.get_data()
     user_name = message.from_user.username
