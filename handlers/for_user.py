@@ -235,14 +235,12 @@ async def get_search_handler(callback: CallbackQuery, bot: Bot):
 @for_user_router.pre_checkout_query(lambda query: True)
 async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
-    print(successful_payment)
 
 
-
-
-@for_user_router.message(F.successful_payment)
+# @for_user_router.message(F.successful_payment)
 async def successful_payment(message: Message, state: FSMContext, session: AsyncSession()):
-    await bot.send_message(message.chat.id, f"Thanks! Payment was successful, id: {message.successful_payment.provider_payment_charge_id}")
+    # await bot.send_message(message.chat.id, f"Thanks! Payment was successful, "
+    #                                         f"id: {message.successful_payment.provider_payment_charge_id}")
     data = await state.get_data()
     user_name = message.from_user.username
     await orm_user_request(session,user_name, data)
