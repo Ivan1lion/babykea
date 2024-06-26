@@ -20,6 +20,7 @@ dp = Dispatcher()
 dp.include_router(for_user_router)
 
 
+
 async def on_startup(bot):
     await drop_db()
 

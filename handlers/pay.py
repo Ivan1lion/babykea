@@ -29,8 +29,10 @@ async def order(message: Message, bot: Bot):
         chat_id=message.chat.id,
         payload="payment form",
         title="Поиск запчастей для детских колясок",
-        description="Рассылка запроса на подбор комплектующих для детской коляски",
-        provider_token=os.getenv("API_TOKEN_TEST"),
+        description=f"Согласно закону об оказании услуг при оплате укажите ваш телефон\n"
+                    f"\nНа указанный номер поступить чек об оплате услуги "
+                    f"\"Рассылка запроса на необходимые комплектующие для коляски\"",
+        provider_token=os.getenv("API_TOKEN"),
         currency="RUB",
         prices=[
             LabeledPrice(
@@ -43,11 +45,9 @@ async def order(message: Message, bot: Bot):
             )
         ],
         provider_data=json.dumps(PROVIDER_DATA_WO_EMAIL),
-        need_email=True,
-        send_email_to_provider=True,
+        need_phone_number=True,
+        send_phone_number_to_provider=True,
         photo_url="https://cache3.youla.io/files/images/780_780/5e/57/5e57f744de8854cf032b63d6.jpg",
         photo_width=150,
-        photo_height=100,
-        need_shipping_address=False,
-        is_flexible=False
+        photo_height=100
     )
