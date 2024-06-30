@@ -32,7 +32,7 @@ async def order(message: Message, bot: Bot):
         description=f"Согласно закону об оказании услуг при оплате укажите ваш телефон\n"
                     f"\nНа указанный номер поступит чек об оплате услуги "
                     f"\"Рассылка запроса на необходимые комплектующие для коляски\"",
-        provider_token=os.getenv("API_TOKEN"),
+        provider_token=os.getenv("API_TOKEN_TEST"),
         currency="RUB",
         prices=[
             LabeledPrice(

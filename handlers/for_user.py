@@ -87,7 +87,7 @@ photo_dict = []
 async def cmd_get_photo(callback: CallbackQuery, state: FSMContext):
     file = FSInputFile("./mediafile_for_bot/1_zapchasti.jpg")
     string = (f"Загрузите в БОТ фото общего вида коляски\n"
-              f"\nДля этого нажмите на скрепку 📎 внизу экрана, сделайте ОДИН снимок и отправьте его")
+              f"\nДля этого нажмите на скрепку 📎 внизу экрана, сделайте ОДИН снимок и отправьте его\n")
     await callback.answer()
     await callback.message.answer_photo(photo=file, caption=string)
     await state.set_state(UserRequest.get_photo1)
@@ -237,32 +237,13 @@ async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
-# @for_user_router.message(F.successful_payment)
 async def successful_payment(message: Message, state: FSMContext, session: AsyncSession()):
-    # await bot.send_message(message.chat.id, f"Thanks! Payment was successful, "
-    #                                         f"id: {message.successful_payment.provider_payment_charge_id}")
     data = await state.get_data()
     user_name = message.from_user.username
     await orm_user_request(session,user_name, data)
     await message.answer(text=f"Ваш запрос отправлен\n"
-                                       f"\nПоиск может занять 24 часа")
+                              f"\nПоиск может занять 24 часа\n")
     await state.clear()
-
-
-
-
-
-# @for_user_router.callback_query(StateFilter("*"), F.data == "get_search")
-# async def clear_handler(callback: CallbackQuery, state: FSMContext, session: AsyncSession()):
-#     data = await state.get_data()
-#     user_name = callback.from_user.username
-#     await orm_user_request(session,user_name, data)
-#     await callback.answer()
-#     await callback.message.answer(text=f"Ваш запрос отправлен\n"
-#                                        f"\nПоиск может занять 24 часа")
-#     await state.clear()
-
-
 
 
 
